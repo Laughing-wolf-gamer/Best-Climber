@@ -14,15 +14,18 @@ public class SpawnManager : MonoBehaviour {
     [SerializeField] private int maxLogDestoryToSpawn = 1;
 
     [Header("Enemy Spawning")]
+    [SerializeField] private float spawnTimes;
     [SerializeField] private Transform[] enemySpawnPoints;
+    [SerializeField] private string[] enemeyNames,foodNames;
     private LevelVariations currentVariations;
     private ObjectPoolingManager poolingManager;
     private int nextLogSpawnAmount;
     private bool canSpawn;
-    
+    private float currentEnemySpawnTime;
     public Action onLogDistroy;
     public static SpawnManager current;
     private void Awake(){
+        currentEnemySpawnTime = spawnTimes;
         current = this;
         poolingManager = ObjectPoolingManager.current;
     }
@@ -57,18 +60,25 @@ public class SpawnManager : MonoBehaviour {
         
     }
     private IEnumerator SpawnEnemy(){
-        yield return new WaitForSeconds(5f);
-        int rand = Random.Range(1,3);
-        for (int i = 0; i < rand; i++){
-            int ran = Random.Range(0,enemySpawnPoints.Length);
-            poolingManager.SpawnFromPool("Spider",enemySpawnPoints[ran].position,enemySpawnPoints[ran].rotation);
+        yield return new WaitForSeconds(currentEnemySpawnTime);
+        currentEnemySpawnTime -= 0.5f;
+        currentEnemySpawnTime = Mathf.Clamp(currentEnemySpawnTime,1,spawnTimes);
+        int randomSpawnNumber = Random.Range(1,5);
+        for (int i = 0; i < randomSpawnNumber; i++){
+            int randomSpawnPoint = Random.Range(0,enemySpawnPoints.Length);
+            int randomEnemy = Random.Range(0,enemeyNames.Length);
+            int randomFood = Random.Range(0,foodNames.Length);
+            if(Random.Range(0,10) > 5){
+                poolingManager.SpawnFromPool(enemeyNames[randomEnemy],enemySpawnPoints[randomSpawnPoint].position,enemySpawnPoints[randomSpawnPoint].rotation);
+            }else{
+                poolingManager.SpawnFromPool(foodNames[randomFood],enemySpawnPoints[randomSpawnPoint].position,enemySpawnPoints[randomSpawnPoint].rotation);
+            }
             yield return new WaitForSeconds(1f);
         }
         yield return StartCoroutine(SpawnEnemy());
     }
     public void InvokeSpawnNewSection(){
         nextLogSpawnAmount++;
-        // currentVariationsList.Add(removeVariation);
         if(nextLogSpawnAmount >= maxLogDestoryToSpawn){
             onLogDistroy?.Invoke();
         }

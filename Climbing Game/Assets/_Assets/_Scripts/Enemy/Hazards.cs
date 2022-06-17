@@ -2,14 +2,12 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Hazards : MonoBehaviour {
-    
+public class Hazards : Interactable {
 
-    private void OnTriggerEnter(Collider coli){
-        if(coli.TryGetComponent<PlayerCollision>(out PlayerCollision player)){
-            
-            MasterController.current.SetGameOver();
-        }
+    public override void Interact(PlayerCollision player){
+        base.Interact(player);
+        player.CollidedWithHazards();
+        MasterController.current.SetGameOver();
     }
 
 }

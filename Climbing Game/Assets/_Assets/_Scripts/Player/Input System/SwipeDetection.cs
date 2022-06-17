@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-namespace GamerWolf.Utility{
+namespace GamerWolf.Utils{
     public class SwipeDetection : MonoBehaviour {
         [SerializeField] private bool onPc = true;
         [SerializeField] private bool inputEnable = true;

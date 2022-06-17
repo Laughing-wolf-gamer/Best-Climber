@@ -2,7 +2,7 @@ using UnityEngine;
 using Baracuda.Monitoring;
 using Baracuda.Monitoring.API;
 using UnityEngine.InputSystem;
-namespace GamerWolf.Utility{
+namespace GamerWolf.Utils{
     public class PlayerInputSystem : MonoBehaviour {
     #region Evens.........
 

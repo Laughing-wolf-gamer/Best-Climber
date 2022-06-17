@@ -2,7 +2,7 @@ using UnityEngine;
 using Baracuda.Monitoring;
 using Baracuda.Monitoring.API;
 using System.Collections.Generic;
-namespace GamerWolf.Utility{
+namespace GamerWolf.Utils{
     
     public class CurveSetUp : MonoBehaviour {
         [Header("Debbuging")]
@@ -11,22 +11,29 @@ namespace GamerWolf.Utility{
         [SerializeField] private int numberOfPoint;
         [SerializeField] private float time;
         [Header("Movement")]
-        [SerializeField] private float bodyMoveSpeed;
-        [SerializeField] private Transform movingBody;
+        [SerializeField] private float bodyTransitionSpeed = 2f;
         [SerializeField] private Transform secondPoint,secondLastPoint;
 
         [Header("Move Direction")]
         [SerializeField] private CurvePointData[] rightMovePointData;
         [SerializeField] private CurvePointData[] leftMovePointData;
+
+        #region Monitoring Section...................
+
+        [Monitor] private int currentActiveCurveSetIndex;
+        [Monitor] private bool lastMoveRight,lastMoveLeft;
+        [Monitor] private bool isJumping;
+
+        #endregion
+
+
         private bool canMove;
         private bool isMoving = true;
-        [Monitor] private int currentActiveCurveSetIndex;
         private bool moveRight;
         private CurvePointData currentDirectionData;
         private int onFinalPointMoveCount = 1;
-        [Monitor] private bool lastMoveRight,lastMoveLeft;
 
-        [Monitor] private bool isJumping;
+        private Transform movingBody;
         private void Awake(){
             MonitoringManager.RegisterTarget(this);
         }
@@ -131,18 +138,19 @@ namespace GamerWolf.Utility{
                 if(currentDirectionData != null){
                     currentDirectionData.currentActiveCurveSet = true;
                     if(currentDirectionData.currentActiveCurveSet){
-                        time += bodyMoveSpeed * Time.deltaTime;
+                        time += bodyTransitionSpeed * Time.deltaTime;
                         movingBody.position = CalculateBazierPointMovement(time,currentDirectionData.anchre1.position,currentDirectionData.handle1.position,currentDirectionData.anchre2.position);
                         if(time >= 1f){
                             isMoving = true;
                             currentDirectionData.currentActiveCurveSet = false;
                             currentDirectionData = null;
-                            time %= 1f;
+                            time = 0f;
                         }
 
                     }
                 }
             }
+            
         }
         private void MoveRight(){
             if(onFinalPointMoveCount > 0){

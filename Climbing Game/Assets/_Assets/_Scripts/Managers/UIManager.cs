@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class UIManager : MonoBehaviour {
     
     [Header("Game View")]
-    [SerializeField] private MovingBody playerController;
+    [SerializeField] private PlayerController playerController;
     [SerializeField] private Image fuelAmountBar;
     [SerializeField] private TextMeshProUGUI fuelAmountText;
     [SerializeField] private TextMeshProUGUI speedText;

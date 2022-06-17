@@ -3,17 +3,19 @@ using UnityEngine;
 using GamerWolf.Utils;
 using System.Collections;
 using UnityEngine.Events;
+using Baracuda.Monitoring;
+using Baracuda.Monitoring.API;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 public class MasterController : MonoBehaviour {
     [SerializeField] private CinemachineVirtualCamera followCamera;
-    [SerializeField] private MovingBody player;
+    [SerializeField] private Transform moveBody;
     [SerializeField] private GameDataSO gameData;
     [SerializeField] private UnityEvent OnGameStart;
     [SerializeField] private UnityEvent OnGamePlaying,OnGameEnd,OnGamePaused,OnGameResume,OnAfterEndDealy;
 
     [SerializeField] private bool isGamePause;
-    public bool isGamePlaying{get;private set;}
+    [Monitor] public bool isGamePlaying{get;private set;}
 
     private Vector3 lastPosition;
     private float longestDistance;
@@ -26,42 +28,46 @@ public class MasterController : MonoBehaviour {
     public static MasterController current;
     private void Awake(){
         current = this;
+        MonitoringManager.RegisterTarget(this);
+    }
+    private void OnDestory(){
+        MonitoringManager.UnregisterTarget(this);
     }
 
     private void Start(){
         Time.timeScale = 1f;
         uIManager = UIManager.current;
-        lastPosition = player.transform.position;
+        lastPosition = moveBody.transform.position;
         StartCoroutine(SpeedReckoner());
         StartCoroutine(GameStartRoutine());
     }
 
     private void Update(){
         if(isGamePlaying){
-            // float currentDistance = Vector3.Distance(lastPosition,player.transform.position);
-            // // currentSpeed = Vector3.Distance(lastPosition,player.transform.position) / 100f;
-            // longestDistance += currentDistance;
-            // lastPosition = player.transform.position;
-            // uIManager.SetcurrentDistance(longestDistance);
-            // if(Input.GetKeyDown(KeyCode.Escape)){
-            //     if(isGamePause){
-            //         Resume();
-            //     }else{
-            //         Pause();
-            //     }
-            // }
+            float currentDistance = Vector3.Distance(lastPosition,moveBody.transform.position);
+            // currentSpeed = Vector3.Distance(lastPosition,player.transform.position) / 100f;
+            longestDistance += currentDistance;
+            lastPosition = moveBody.transform.position;
+            uIManager.SetcurrentDistance(longestDistance);
+            if(Input.GetKeyDown(KeyCode.Escape)){
+                if(isGamePause){
+                    Resume();
+                }else{
+                    Pause();
+                }
+            }
         }
     }
     private IEnumerator SpeedReckoner() {
 
         YieldInstruction timedWait = new WaitForSeconds(0.1f);
-        Vector3 lastPosition = player.transform.position;
+        Vector3 lastPosition = moveBody.transform.position;
         float lastTimestamp = Time.time;
 
         while (enabled) {
             yield return timedWait;
 
-            var deltaPosition = (player.transform.position - lastPosition).magnitude;
+            var deltaPosition = (moveBody.transform.position - lastPosition).magnitude;
             var deltaTime = Time.time - lastTimestamp;
 
             if (Mathf.Approximately(deltaPosition, 0f)) // Clean up "near-zero" displacement
@@ -71,7 +77,7 @@ public class MasterController : MonoBehaviour {
 
             uIManager.SetSpeed(currentSpeed);
             // Debug.Log(currentSpeed.ToString("F2"));
-            lastPosition = player.transform.position;
+            lastPosition = moveBody.transform.position;
             lastTimestamp = Time.time;
         }
     }

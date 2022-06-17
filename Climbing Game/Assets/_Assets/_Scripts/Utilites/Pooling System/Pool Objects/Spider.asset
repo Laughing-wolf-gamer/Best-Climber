@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tag: Spider
   prefabs: {fileID: 2000504805232471651, guid: 1591f3fddabddd0409164b82bf27ca31, type: 3}
-  size: 20
+  size: 10
