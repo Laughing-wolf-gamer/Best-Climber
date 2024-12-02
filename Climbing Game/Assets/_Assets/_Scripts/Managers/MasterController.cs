@@ -28,10 +28,10 @@ public class MasterController : MonoBehaviour {
     public static MasterController current;
     private void Awake(){
         current = this;
-        MonitoringManager.RegisterTarget(this);
+     //    MonitoringManager.RegisterTarget(this);
     }
     private void OnDestory(){
-        MonitoringManager.UnregisterTarget(this);
+     //    MonitoringManager.UnregisterTarget(this);
     }
 
     private void Start(){

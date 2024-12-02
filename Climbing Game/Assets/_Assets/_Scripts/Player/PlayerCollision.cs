@@ -42,7 +42,7 @@ public class PlayerCollision : MonoBehaviour {
         rightJump = false;
     }
     public void CollidedWithHazards(){
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         transform.eulerAngles = new Vector3(transform.eulerAngles.x,90f,transform.eulerAngles.z);
         Invoke(nameof(InvokeJump),0.5f);
     }

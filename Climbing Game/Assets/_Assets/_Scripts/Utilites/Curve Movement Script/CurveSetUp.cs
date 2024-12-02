@@ -35,10 +35,10 @@ namespace GamerWolf.Utils{
 
         private Transform movingBody;
         private void Awake(){
-            MonitoringManager.RegisterTarget(this);
+          //   MonitoringManager.RegisterTarget(this);
         }
         private void OnDestroy(){
-            MonitoringManager.UnregisterTarget(this);
+          //   MonitoringManager.UnregisterTarget(this);
         }
         private void Start(){
             if(showDebbging){
